@@ -29,7 +29,7 @@ public class ApiAuthenticator implements Authenticator {
 
     @Override
     public boolean configuredFor(KeycloakSession keycloakSession, RealmModel realmModel, UserModel userModel) {
-        return false;
+        return keycloakSession.users().configuredForCredentialType("api_authentication", realmModel, userModel);
     }
 
     @Override

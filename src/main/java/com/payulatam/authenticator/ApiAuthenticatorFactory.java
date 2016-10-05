@@ -31,7 +31,10 @@ public class ApiAuthenticatorFactory implements AuthenticatorFactory, Configurab
         return SINGLETON;
     }
 
-    private static AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {};
+    private static AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {
+        AuthenticationExecutionModel.Requirement.REQUIRED,
+        AuthenticationExecutionModel.Requirement.DISABLED
+    };
 
     @Override
     public AuthenticationExecutionModel.Requirement[] getRequirementChoices() {
@@ -45,7 +48,7 @@ public class ApiAuthenticatorFactory implements AuthenticatorFactory, Configurab
 
     @Override
     public boolean isConfigurable() {
-        return true;
+        return false;
     }
 
     @Override
@@ -63,12 +66,12 @@ public class ApiAuthenticatorFactory implements AuthenticatorFactory, Configurab
 
     @Override
     public String getHelpText() {
-        return null;
+        return "password";
     }
 
     @Override
     public String getDisplayType() {
-        return null;
+        return "Api Authentication";
     }
 
     @Override
@@ -78,16 +81,13 @@ public class ApiAuthenticatorFactory implements AuthenticatorFactory, Configurab
 
     @Override
     public void init(Config.Scope config) {
-
     }
 
     @Override
     public void postInit(KeycloakSessionFactory factory) {
-
     }
 
     @Override
     public void close() {
-
     }
 }

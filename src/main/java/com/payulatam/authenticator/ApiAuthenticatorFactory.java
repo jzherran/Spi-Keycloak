@@ -66,7 +66,7 @@ public class ApiAuthenticatorFactory implements AuthenticatorFactory, Configurab
 
     @Override
     public String getHelpText() {
-        return "password";
+        return "Authentication with password and username validation.";
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ApiAuthenticatorFactory implements AuthenticatorFactory, Configurab
 
     @Override
     public String getReferenceCategory() {
-        return null;
+        return "password";
     }
 
     @Override

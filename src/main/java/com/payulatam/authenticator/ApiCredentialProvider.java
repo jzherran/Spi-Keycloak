@@ -16,20 +16,16 @@ import org.keycloak.models.cache.OnUserCache;
  */
 public class ApiCredentialProvider implements CredentialProvider, CredentialInputValidator, CredentialInputUpdater, OnUserCache {
 
-    public static final String SECRET_QUESTION = "SECRET_QUESTION";
-    public static final String CACHE_KEY = ApiCredentialProvider.class.getName() + "." + SECRET_QUESTION;
+    public static final String API_AUTH = "API_AUTHENTICATION";
+    public static final String CACHE_KEY = ApiCredentialProvider.class.getName() + "." + API_AUTH;
 
     protected KeycloakSession session;
 
     @Override
-    public boolean updateCredential(RealmModel realmModel, UserModel userModel, CredentialInput credentialInput) {
-        return false;
-    }
+    public boolean updateCredential(RealmModel realmModel, UserModel userModel, CredentialInput credentialInput) { return false; }
 
     @Override
-    public void disableCredentialType(RealmModel realmModel, UserModel userModel, String s) {
-
-    }
+    public void disableCredentialType(RealmModel realmModel, UserModel userModel, String s) { }
 
     @Override
     public boolean supportsCredentialType(String s) {
@@ -47,7 +43,5 @@ public class ApiCredentialProvider implements CredentialProvider, CredentialInpu
     }
 
     @Override
-    public void onCache(RealmModel realmModel, CachedUserModel cachedUserModel) {
-
-    }
+    public void onCache(RealmModel realmModel, CachedUserModel cachedUserModel) { }
 }

@@ -6,8 +6,6 @@ import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserCredentialValidatorProvider;
 import org.keycloak.storage.user.UserQueryProvider;
 
-import javax.ejb.Local;
-import javax.ejb.Stateful;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +13,6 @@ import java.util.Map;
  * @author <a href="mailto:jhonatan.zambrano@payulatam.com">Jhonatan A. Zambrano</a>
  *         7/10/2016
  */
-@Stateful
-@Local(PayUUserStorageProvider.class)
 public class PayUUserStorageProvider implements UserStorageProvider,
         UserCredentialValidatorProvider,
         UserQueryProvider {

@@ -1,0 +1,3 @@
+com\payulatam\keycloak\authenticator\AbstractMobileGrantAuthenticator.class
+com\payulatam\keycloak\authenticator\ValidateUsername.class
+com\payulatam\keycloak\authenticator\ValidatePassword.class

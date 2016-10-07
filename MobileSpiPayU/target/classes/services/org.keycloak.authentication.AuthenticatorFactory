@@ -1,0 +1,2 @@
+com.payulatam.keycloak.authenticator.ValidateUsername
+com.payulatam.keycloak.authenticator.ValidatePassword

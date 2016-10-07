@@ -1,0 +1,3 @@
+com\payulatam\keycloak\storage\user\PayUUserStorageProvider.class
+com\payulatam\keycloak\storage\user\PayUUserStorageProviderFactory.class
+com\payulatam\keycloak\storage\user\PayUUser.class

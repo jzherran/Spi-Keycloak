@@ -19,10 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:jhonatan.zambrano@payulatam.com">Jhonatan A. Zambrano</a>
@@ -110,7 +107,10 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     }
 
     @Override
-    public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm, int firstResult, int maxResults) { return new LinkedList<>(); }
+    public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm, int firstResult, int maxResults) {
+        PayUUser payuUser = new PayUUser(session, realm, model);
+        return Arrays.asList(payuUser);
+    }
 
     @Override
     public List<UserModel> getGroupMembers(RealmModel realm, GroupModel group, int firstResult, int maxResults) { return new LinkedList<>(); }
@@ -146,7 +146,8 @@ public class PayUUserStorageProvider implements UserStorageProvider,
 
     @Override
     public UserModel getUserById(String id, RealmModel realm) {
-        return null;
+        PayUUser payuUser = new PayUUser(session, realm, model);
+        return payuUser;
     }
 
     @Override

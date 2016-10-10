@@ -18,14 +18,17 @@
 package com.payulatam.keycloak.authenticator;
 
 import org.keycloak.authentication.AuthenticationFlowContext;
-import org.keycloak.models.AuthenticationExecutionModel;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.UserModel;
+import org.keycloak.authentication.AuthenticationFlowError;
+import org.keycloak.authentication.authenticators.browser.AbstractUsernameFormAuthenticator;
+import org.keycloak.events.Details;
+import org.keycloak.events.Errors;
+import org.keycloak.models.*;
+import org.keycloak.models.utils.KeycloakModelUtils;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.services.managers.AuthenticationManager;
 
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +43,26 @@ public class ValidateUsername extends AbstractMobileGrantAuthenticator {
     @Override
     public void authenticate(AuthenticationFlowContext context) {
         MultivaluedMap<String, String> inputData = context.getHttpRequest().getDecodedFormParameters();
-        inputData.getFirst(AuthenticationManager.FORM_USERNAME);
+        String username = inputData.getFirst(AuthenticationManager.FORM_USERNAME);
+
+        if (username == null) {
+            context.getEvent().error(Errors.USER_NOT_FOUND);
+            Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "invalid_request", "Missing parameter: username");
+            context.failure(AuthenticationFlowError.INVALID_USER, challengeResponse);
+            return;
+        }
+        context.getEvent().detail(Details.USERNAME, username);
+        context.getClientSession().setNote(AbstractUsernameFormAuthenticator.ATTEMPTED_USERNAME, username);
+
+        UserModel user = null;
+        try {
+            user = KeycloakModelUtils.findUserByNameOrEmail(context.getSession(), context.getRealm(), username);
+        } catch (ModelDuplicateException mde) {
+            Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "invalid_request", "Invalid user credentials");
+            context.failure(AuthenticationFlowError.INVALID_USER, challengeResponse);
+            return;
+        }
+
         context.success();
     }
 

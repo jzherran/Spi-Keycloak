@@ -18,12 +18,18 @@
 package com.payulatam.keycloak.authenticator;
 
 import org.keycloak.authentication.AuthenticationFlowContext;
+import org.keycloak.authentication.AuthenticationFlowError;
+import org.keycloak.events.Errors;
 import org.keycloak.models.AuthenticationExecutionModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.provider.ProviderConfigProperty;
+import org.keycloak.services.managers.AuthenticationManager;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,8 +41,35 @@ public class ValidatePassword extends AbstractMobileGrantAuthenticator {
 
     private static final String PROVIDER_ID = "mobile-grant-validate-password";
 
+    public static final String DATA_PASSWORD = "password";
+
     @Override
     public void authenticate(AuthenticationFlowContext context) {
+
+        MultivaluedMap<String, String> inputData = context.getHttpRequest().getDecodedFormParameters();
+        String username = inputData.getFirst(AuthenticationManager.FORM_USERNAME);
+        String password = inputData.getFirst(ValidatePassword.DATA_PASSWORD);
+
+        if (username == null || password == null) {
+            context.getEvent().error(Errors.INVALID_USER_CREDENTIALS);
+            Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "invalid_request", "Missing parameters");
+            context.failure(AuthenticationFlowError.INVALID_CREDENTIALS, challengeResponse);
+            return;
+        }
+
+        HashMap<String, String>  parameters = new HashMap<>();
+        parameters.put(AuthenticationManager.FORM_USERNAME, username);
+        parameters.put(ValidatePassword.DATA_PASSWORD, password);
+
+        List<UserModel> users = context.getSession().userStorageManager().searchForUser(parameters, context.getRealm());
+        if(!users.isEmpty())
+            context.setUser(users.get(0));
+        else {
+            context.getEvent().error(Errors.USER_NOT_FOUND);
+            Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "not_found_user", "User not found.");
+            context.failure(AuthenticationFlowError.UNKNOWN_USER, challengeResponse);
+            return;
+        }
         context.success();
     }
 

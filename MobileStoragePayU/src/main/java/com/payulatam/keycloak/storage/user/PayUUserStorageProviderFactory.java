@@ -12,11 +12,11 @@ import javax.naming.InitialContext;
  */
 public class PayUUserStorageProviderFactory implements UserStorageProviderFactory<PayUUserStorageProvider> {
 
+    private static final PayUUserStorageProvider provider = new PayUUserStorageProvider();
+
     @Override
     public PayUUserStorageProvider create(KeycloakSession session, ComponentModel model) {
         try {
-            InitialContext ctx = new InitialContext();
-            PayUUserStorageProvider provider = (PayUUserStorageProvider)ctx.lookup("java:global/mobile-storage-payulatam/" + PayUUserStorageProvider.class.getSimpleName());
             provider.setModel(model);
             provider.setSession(session);
             return provider;

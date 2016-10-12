@@ -10,11 +10,19 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.models.*;
+import org.keycloak.models.cache.CachedUserModel;
+import org.keycloak.models.cache.OnUserCache;
+import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserCredentialValidatorProvider;
 import org.keycloak.storage.user.UserLookupProvider;
 import org.keycloak.storage.user.UserQueryProvider;
 
+//import javax.ejb.Stateful;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,10 +36,21 @@ import java.util.*;
 public class PayUUserStorageProvider implements UserStorageProvider,
         UserLookupProvider,
         UserCredentialValidatorProvider,
-        UserQueryProvider {
-
+        UserQueryProvider,
+        OnUserCache{
+    
+    protected EntityManager em = getEntityManager();
     protected ComponentModel model;
     protected KeycloakSession session;
+
+    private EntityManager getEntityManager() {
+        if (this.em == null) {
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("keycloack-payulatam-storage");
+
+            em = emf.createEntityManager();
+        }
+        return em;
+    }
 
     public void setModel(ComponentModel model) {
         this.model = model;
@@ -109,6 +128,15 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     @Override
     public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm, int firstResult, int maxResults) {
         PayUUser payuUser = new PayUUser(session, realm, model);
+        payuUser.setAttribute("payuInfo", Arrays.asList("nuevo", "atributo"));
+        payuUser.setAttribute("demoInfo", Arrays.asList("atributo", "demo"));
+
+        UserEntity entity = em.find(UserEntity.class, 4L);
+        if (entity == null) {
+
+            //return null;
+        }
+
         return Arrays.asList(payuUser);
     }
 
@@ -147,6 +175,8 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     @Override
     public UserModel getUserById(String id, RealmModel realm) {
         PayUUser payuUser = new PayUUser(session, realm, model);
+        payuUser.setAttribute("payuInfo", Arrays.asList("nuevo", "atributo"));
+        payuUser.setAttribute("demoInfo", Arrays.asList("atributo", "demo"));
         return payuUser;
     }
 
@@ -158,5 +188,10 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     @Override
     public UserModel getUserByEmail(String email, RealmModel realm) {
         return null;
+    }
+
+    @Override
+    public void onCache(RealmModel realm, CachedUserModel user) {
+        System.out.println("");
     }
 }

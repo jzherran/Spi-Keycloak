@@ -41,7 +41,7 @@ public class PayUUserStorageProvider implements UserStorageProvider,
 
     private EntityManager getEntityManager() {
         if (this.em == null) {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("mobile-storage-payulatam.jar#keycloak.payulatam.mol");
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("payulatam");
             em = emf.createEntityManager();
         }
         return em;

@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class ValidatePassword extends AbstractMobileGrantAuthenticator {
 
-    private static final String PROVIDER_ID = "mobile-grant-validate-password";
+    private static final String PROVIDER_ID = "mobile-grant-validate-credentials";
 
     public static final String DATA_PASSWORD = "password";
 
@@ -97,7 +97,7 @@ public class ValidatePassword extends AbstractMobileGrantAuthenticator {
 
     @Override
     public String getDisplayType() {
-        return "Password Mobile";
+        return "Credentials Mobile";
     }
 
     @Override
@@ -122,7 +122,7 @@ public class ValidatePassword extends AbstractMobileGrantAuthenticator {
 
     @Override
     public String getHelpText() {
-        return "Validates the password supplied as a 'password' form parameter in mobile grant request";
+        return "Validates the credentials supplied as a form parameter in mobile grant request";
     }
 
     @Override

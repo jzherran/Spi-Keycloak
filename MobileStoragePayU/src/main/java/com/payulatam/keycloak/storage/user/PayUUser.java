@@ -14,10 +14,12 @@ import java.util.UUID;
  */
 public class PayUUser extends AbstractUserAdapterFederatedStorage {
 
+    protected PayUUserEntity payUUserEntity;
     protected String keycloakId;
 
-    public PayUUser(KeycloakSession session, RealmModel realm, ComponentModel storageProviderModel) {
+    public PayUUser(KeycloakSession session, RealmModel realm, ComponentModel storageProviderModel, PayUUserEntity payUUserEntity) {
         super(session, realm, storageProviderModel);
+        this.payUUserEntity = payUUserEntity;
         keycloakId = StorageId.keycloakId(storageProviderModel, UUID.randomUUID().toString());
     }
 

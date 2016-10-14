@@ -4,16 +4,16 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
     <persistence-unit name="payulatam-user-mol">
-        <non-jta-data-source>java:/MolDS</non-jta-data-source>
+        <jta-data-source>java:/MolXADS</jta-data-source>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>com.payulatam.keycloak.storage.user.PayUUserEntity</class>
 
+
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
-            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/directv" />
-            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
-            <property name="hibernate.connection.username" value="directv" />
-            <property name="hibernate.connection.password" value="KlP0MHEjVpuxCQc30r1P" />
+            <property name="max-pool-size" value="10" />
+            <property name="max_prepared_transactions" value="10" />
         </properties>
+
     </persistence-unit>
 </persistence>

@@ -169,7 +169,16 @@ public class PayUUserStorageProvider implements UserStorageProvider,
 
     @Override
     public UserModel getUserByUsername(String username, RealmModel realm) {
-        return null;
+
+        PayUUserEntity entity = em.find(PayUUserEntity.class, 4L);
+
+
+        PayUUserEntity pue = new PayUUserEntity();
+        pue.setFirstname("Cindy");
+        pue.setId(4L);
+        PayUUser pu = new PayUUser(session,realm,model,pue);
+
+        return pu;
     }
 
     @Override

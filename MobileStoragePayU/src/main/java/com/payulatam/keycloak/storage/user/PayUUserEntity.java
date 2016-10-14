@@ -21,7 +21,7 @@ import javax.persistence.*;
 public class PayUUserEntity {
 
     @Id
-    private String id;
+    private Long id;
 
     @Column(name = "nombres")
     private String firstname;
@@ -34,11 +34,11 @@ public class PayUUserEntity {
     @Column(name = "phone")
     private String phone;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

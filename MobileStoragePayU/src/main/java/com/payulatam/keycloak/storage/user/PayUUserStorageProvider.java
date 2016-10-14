@@ -14,10 +14,9 @@ import org.keycloak.storage.user.UserCredentialValidatorProvider;
 import org.keycloak.storage.user.UserLookupProvider;
 import org.keycloak.storage.user.UserQueryProvider;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.persistence.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,23 +28,29 @@ import java.util.Map;
  * @author <a href="mailto:jhonatan.zambrano@payulatam.com">Jhonatan A. Zambrano</a>
  *         7/10/2016
  */
+@Stateless
+@Local(PayUUserStorageProvider.class)
 public class PayUUserStorageProvider implements UserStorageProvider,
         UserLookupProvider,
         UserCredentialValidatorProvider,
         UserQueryProvider,
         OnUserCache
 {
+    @PersistenceContext
     protected EntityManager em;
+
     protected ComponentModel model;
     protected KeycloakSession session;
 
+    /*
     private EntityManager getEntityManager() {
         if (this.em == null) {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("payulatam");
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("payulatam.mol");
             em = emf.createEntityManager();
         }
         return em;
     }
+    */
 
     public void setModel(ComponentModel model) {
         this.model = model;
@@ -124,7 +129,7 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     @Override
     public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm, int firstResult, int maxResults) {
 
-        TypedQuery<PayUUserEntity> query = getEntityManager().createNamedQuery("searchForUser", PayUUserEntity.class);
+        /*TypedQuery<PayUUserEntity> query = em.createNamedQuery("searchForUser", PayUUserEntity.class);
         query.setParameter("search", "%" + params.get("username").toLowerCase() + "%");
         if (firstResult != -1) {
             query.setFirstResult(firstResult);
@@ -132,9 +137,12 @@ public class PayUUserStorageProvider implements UserStorageProvider,
         if (maxResults != -1) {
             query.setMaxResults(maxResults);
         }
-        List<PayUUserEntity> results = query.getResultList();
+        List<PayUUserEntity> results = query.getResultList();*/
+        Query query = em.createNativeQuery("select * from celular");
+        System.out.println(query.getResultList());
+
         List<UserModel> users = new LinkedList<>();
-        for (PayUUserEntity entity : results) users.add(new PayUUser(session, realm, model, entity));
+        //for (PayUUserEntity entity : results) users.add(new PayUUser(session, realm, model, entity));
         return users;
     }
 
@@ -152,7 +160,7 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     @Override
     public UserModel getUserById(String id, RealmModel realm) {
         String persistenceId = StorageId.externalId(id);
-        PayUUserEntity entity = getEntityManager().find(PayUUserEntity.class, persistenceId);
+        PayUUserEntity entity = em.find(PayUUserEntity.class, persistenceId);
         if (entity == null) {
             return null;
         }

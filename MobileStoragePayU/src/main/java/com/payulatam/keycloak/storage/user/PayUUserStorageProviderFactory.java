@@ -17,6 +17,8 @@ public class PayUUserStorageProviderFactory implements UserStorageProviderFactor
     @Override
     public PayUUserStorageProvider create(KeycloakSession session, ComponentModel model) {
         try {
+            InitialContext ctx = new InitialContext();
+            PayUUserStorageProvider provider = (PayUUserStorageProvider)ctx.lookup("java:global/mobile-storage-payulatam/" + PayUUserStorageProvider.class.getSimpleName());
             provider.setModel(model);
             provider.setSession(session);
             return provider;

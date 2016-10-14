@@ -61,9 +61,9 @@ public class ValidatePassword extends AbstractMobileGrantAuthenticator {
         parameters.put(AuthenticationManager.FORM_USERNAME, username);
         parameters.put(ValidatePassword.DATA_PASSWORD, password);
 
-        List<UserModel> users = context.getSession().userStorageManager().searchForUser(parameters, context.getRealm());
-        if(!users.isEmpty())
-            context.setUser(users.get(0));
+        UserModel user = context.getSession().userStorageManager().getUserByEmail(username, context.getRealm());
+        if(user != null)
+            context.setUser(user);
         else {
             context.getEvent().error(Errors.USER_NOT_FOUND);
             Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "not_found_user", "User not found.");

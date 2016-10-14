@@ -8,7 +8,6 @@ import org.keycloak.component.ComponentModel;
 import org.keycloak.models.*;
 import org.keycloak.models.cache.CachedUserModel;
 import org.keycloak.models.cache.OnUserCache;
-import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserCredentialValidatorProvider;
 import org.keycloak.storage.user.UserLookupProvider;
@@ -16,10 +15,14 @@ import org.keycloak.storage.user.UserQueryProvider;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -121,30 +124,10 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     public List<UserModel> searchForUser(String search, RealmModel realm, int firstResult, int maxResults) { return new LinkedList<>(); }
 
     @Override
-    public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm) {
-
-        return new LinkedList<>();
-    }
+    public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm) { return new LinkedList<>(); }
 
     @Override
-    public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm, int firstResult, int maxResults) {
-
-        /*TypedQuery<PayUUserEntity> query = em.createNamedQuery("searchForUser", PayUUserEntity.class);
-        query.setParameter("search", "%" + params.get("username").toLowerCase() + "%");
-        if (firstResult != -1) {
-            query.setFirstResult(firstResult);
-        }
-        if (maxResults != -1) {
-            query.setMaxResults(maxResults);
-        }
-        List<PayUUserEntity> results = query.getResultList();*/
-        Query query = em.createNativeQuery("select * from celular");
-        System.out.println(query.getResultList());
-
-        List<UserModel> users = new LinkedList<>();
-        //for (PayUUserEntity entity : results) users.add(new PayUUser(session, realm, model, entity));
-        return users;
-    }
+    public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm, int firstResult, int maxResults) { return new LinkedList<>(); }
 
     @Override
     public List<UserModel> getGroupMembers(RealmModel realm, GroupModel group, int firstResult, int maxResults) { return new LinkedList<>(); }
@@ -158,32 +141,29 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     public List<UserModel> searchForUserByUserAttribute(String attrName, String attrValue, RealmModel realm) { return new LinkedList<>(); }
 
     @Override
-    public UserModel getUserById(String id, RealmModel realm) {
-        String persistenceId = StorageId.externalId(id);
-        PayUUserEntity entity = em.find(PayUUserEntity.class, persistenceId);
-        if (entity == null) {
-            return null;
-        }
-        return new PayUUser(session, realm, model, entity);
-    }
+    public UserModel getUserById(String id, RealmModel realm) { return null; }
 
     @Override
     public UserModel getUserByUsername(String username, RealmModel realm) {
 
-        PayUUserEntity entity = em.find(PayUUserEntity.class, 4L);
-
-
-        PayUUserEntity pue = new PayUUserEntity();
-        pue.setFirstname("Cindy");
-        pue.setId(4L);
-        PayUUser pu = new PayUUser(session,realm,model,pue);
-
-        return pu;
+        Query query = em.createNamedQuery("getUserByUsername");
+        query.setParameter("email", username);
+        PayUUserEntity entity = (PayUUserEntity) query.getSingleResult();
+        if(entity != null)
+            return new PayUUser(session, realm, model, entity);
+        else
+            return null;
     }
 
     @Override
     public UserModel getUserByEmail(String email, RealmModel realm) {
-        return null;
+        Query query = em.createNamedQuery("getUserByEmail");
+        query.setParameter("email", email);
+        PayUUserEntity entity = (PayUUserEntity) query.getSingleResult();
+        if(entity != null)
+            return new PayUUser(session, realm, model, entity);
+        else
+            return null;
     }
 
     @Override

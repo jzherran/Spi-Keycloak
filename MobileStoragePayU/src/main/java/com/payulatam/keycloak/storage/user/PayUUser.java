@@ -25,7 +25,7 @@ public class PayUUser extends AbstractUserAdapterFederatedStorage {
 
     @Override
     public String getUsername() {
-        return "jzherran";
+        return payUUserEntity.getEmail();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.payulatam.keycloak.storage.user;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
@@ -20,20 +22,15 @@ import javax.persistence.*;
 @Table(name="usuario")
 public class PayUUserEntity {
 
-    @Id
     private Long id;
-
-    @Column(name = "nombres")
     private String firstname;
-    @Column(name = "apellidos")
     private String lastname;
-    @Column(name = "email")
     private String email;
-    @Column(name = "password")
     private String password;
-    @Column(name = "phone")
     private String phone;
 
+    @Id
+    @Column(name = "id")
     public Long getId() {
         return id;
     }
@@ -42,6 +39,7 @@ public class PayUUserEntity {
         this.id = id;
     }
 
+    @Column(name = "nombres")
     public String getFirstname() {
         return firstname;
     }
@@ -50,6 +48,7 @@ public class PayUUserEntity {
         this.firstname = firstname;
     }
 
+    @Column(name = "apellidos")
     public String getLastname() {
         return lastname;
     }
@@ -58,6 +57,7 @@ public class PayUUserEntity {
         this.lastname = lastname;
     }
 
+    @Column(name = "email")
     public String getEmail() {
         return email;
     }
@@ -66,6 +66,7 @@ public class PayUUserEntity {
         this.email = email;
     }
 
+    @Column(name = "password")
     public String getPassword() {
         return password;
     }
@@ -74,6 +75,7 @@ public class PayUUserEntity {
         this.password = password;
     }
 
+    @Column(name = "phone")
     public String getPhone() {
         return phone;
     }

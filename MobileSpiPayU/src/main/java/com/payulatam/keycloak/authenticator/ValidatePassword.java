@@ -61,15 +61,15 @@ public class ValidatePassword extends AbstractMobileGrantAuthenticator {
         UserModel user = context.getSession().userStorageManager().getUserByEmail(username, context.getRealm());
         if(user != null) {
             UserCredentialModel credentialModel = UserCredentialModel.password(password);
-            //boolean validationOutput = context.getSession().userStorageManager().validCredentials(context.getSession(), context.getRealm(), user, credentialModel);
-            //if(validationOutput)
+            boolean validationOutput = context.getSession().userStorageManager().validCredentials(context.getSession(), context.getRealm(), user, credentialModel);
+            if(validationOutput)
                 context.setUser(user);
-            /*else {
+            else {
                 context.getEvent().error(Errors.INVALID_USER_CREDENTIALS);
                 Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "invalid_credentials", "Invalid credentials");
                 context.failure(AuthenticationFlowError.INVALID_CREDENTIALS, challengeResponse);
                 return;
-            }*/
+            }
         }
         else {
             context.getEvent().error(Errors.USER_NOT_FOUND);

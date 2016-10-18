@@ -8,6 +8,7 @@ import org.keycloak.component.ComponentModel;
 import org.keycloak.models.*;
 import org.keycloak.models.cache.CachedUserModel;
 import org.keycloak.models.cache.OnUserCache;
+import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserCredentialValidatorProvider;
 import org.keycloak.storage.user.UserLookupProvider;
@@ -47,16 +48,6 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     protected ComponentModel model;
     protected KeycloakSession session;
 
-    /*
-    private EntityManager getEntityManager() {
-        if (this.em == null) {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("payulatam.mol");
-            em = emf.createEntityManager();
-        }
-        return em;
-    }
-    */
-
     public void setModel(ComponentModel model) {
         this.model = model;
     }
@@ -91,9 +82,12 @@ public class PayUUserStorageProvider implements UserStorageProvider,
         query.setParameter("email", user.getUsername());
         String password = (String) query.getSingleResult();
         try {
-            if(!password.isEmpty() && password.equals(digestMD5(input.get(0).getValue())))
+            if(!password.isEmpty() && password.equals(digestMD5(input.get(0).getValue()))) {
                 return true;
-            else return false;
+            }
+            else {
+                return false;
+            }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
@@ -153,7 +147,19 @@ public class PayUUserStorageProvider implements UserStorageProvider,
     public List<UserModel> searchForUserByUserAttribute(String attrName, String attrValue, RealmModel realm) { return new LinkedList<>(); }
 
     @Override
-    public UserModel getUserById(String id, RealmModel realm) { return null; }
+    public UserModel getUserById(String id, RealmModel realm) {
+        String username = StorageId.externalId(id);
+        if(username != null) {
+            Query query = em.createNamedQuery("getUserByUsername");
+            query.setParameter("email", username);
+            PayUUserEntity entity = (PayUUserEntity) query.getSingleResult();
+            if (entity != null)
+                return new PayUUser(session, realm, model, entity);
+            else
+                return null;
+        } else
+            return null;
+    }
 
     @Override
     public UserModel getUserByUsername(String username, RealmModel realm) {

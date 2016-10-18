@@ -20,10 +20,7 @@ package com.payulatam.keycloak.authenticator;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.events.Errors;
-import org.keycloak.models.AuthenticationExecutionModel;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.UserModel;
+import org.keycloak.models.*;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.services.managers.AuthenticationManager;
 
@@ -62,8 +59,12 @@ public class ValidatePassword extends AbstractMobileGrantAuthenticator {
         parameters.put(ValidatePassword.DATA_PASSWORD, password);
 
         UserModel user = context.getSession().userStorageManager().getUserByEmail(username, context.getRealm());
-        if(user != null)
-            context.setUser(user);
+        if(user != null) {
+            UserCredentialModel credentialModel = UserCredentialModel.password(password);
+            boolean validationOutput = context.getSession().userStorageManager().validCredentials(context.getSession(), context.getRealm(), user, credentialModel);
+            if(validationOutput)
+                context.setUser(user);
+        }
         else {
             context.getEvent().error(Errors.USER_NOT_FOUND);
             Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "not_found_user", "User not found.");

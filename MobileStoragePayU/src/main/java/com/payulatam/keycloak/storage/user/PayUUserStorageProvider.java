@@ -85,6 +85,10 @@ public class PayUUserStorageProvider implements UserStorageProvider,
 
     @Override
     public boolean validCredentials(KeycloakSession session, RealmModel realm, UserModel user, List<UserCredentialModel> input) {
+        Query query = em.createNamedQuery("getUserByUsername");
+        query.setParameter("email", user.getEmail());
+        PayUUserEntity entity = (PayUUserEntity) query.getSingleResult();
+
         return false;
     }
 

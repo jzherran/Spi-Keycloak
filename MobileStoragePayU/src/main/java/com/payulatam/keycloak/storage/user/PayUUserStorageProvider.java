@@ -22,6 +22,8 @@ import javax.persistence.TypedQuery;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,11 +87,17 @@ public class PayUUserStorageProvider implements UserStorageProvider,
 
     @Override
     public boolean validCredentials(KeycloakSession session, RealmModel realm, UserModel user, List<UserCredentialModel> input) {
-        Query query = em.createNamedQuery("getUserByUsername");
-        query.setParameter("email", user.getEmail());
-        PayUUserEntity entity = (PayUUserEntity) query.getSingleResult();
-
-        return false;
+        Query query = em.createNamedQuery("findPasswordMD5");
+        query.setParameter("email", user.getUsername());
+        String password = (String) query.getSingleResult();
+        try {
+            if(!password.isEmpty() && password.equals(digestMD5(input.get(0).getValue())))
+                return true;
+            else return false;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -194,5 +202,30 @@ public class PayUUserStorageProvider implements UserStorageProvider,
             result.append(line);
         }
         System.out.println(result);
+    }
+
+    private String digestMD5(String password) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(password.getBytes());
+
+        byte byteData[] = md.digest();
+
+        //convert the byte to hex format method 1
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        System.out.println("Digest(in hex format):: " + sb.toString());
+
+        //convert the byte to hex format method 2
+        StringBuffer hexString = new StringBuffer();
+        for (int i=0;i<byteData.length;i++) {
+            String hex=Integer.toHexString(0xff & byteData[i]);
+            if(hex.length()==1) hexString.append('0');
+            hexString.append(hex);
+        }
+
+        return hexString.toString();
     }
 }

@@ -16,8 +16,8 @@ import javax.persistence.*;
         @NamedQuery(name="getAllUsers", query="select u from PayUUserEntity u"),
         @NamedQuery(name="searchForUser", query="select u from PayUUserEntity u where " +
                 "( lower(u.email) like :search or u.email like :search ) order by u.email"),
-        @NamedQuery(name="findPasswordMD5", query="select MD5(u.password) from PayUUserEntity u where " +
-                "where u.email = :email")
+        @NamedQuery(name="findPasswordMD5", query="select u.password from PayUUserEntity u where " +
+                "u.email = :email")
 })
 
 @Entity
